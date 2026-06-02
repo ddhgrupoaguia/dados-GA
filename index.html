@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Levantamento de Dados Cadastrais</title>
+  <title>Cadastro de Governança — Grupo Águia</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,7 +12,7 @@
       background: #f4f5f7;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 2rem 1rem;
       color: #1a1a2e;
@@ -24,42 +24,84 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.08);
       padding: 2rem 2.5rem;
       width: 100%;
-      max-width: 580px;
+      max-width: 680px;
     }
 
-    .card-header { margin-bottom: 1.75rem; }
-    .card-header h1 { font-size: 20px; font-weight: 600; color: #111827; }
-    .card-header p  { font-size: 14px; color: #6b7280; margin-top: 4px; }
+    .card-header { margin-bottom: 1.75rem; text-align: center; }
+    .card-header .logo-text {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #6366f1; margin-bottom: 8px;
+    }
+    .card-header h1 { font-size: 20px; font-weight: 700; color: #111827; }
+    .card-header p  { font-size: 13px; color: #6b7280; margin-top: 6px; line-height: 1.6; }
+
+    .legend-bar {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 10px; padding: 10px 14px;
+      margin-bottom: 1.5rem; font-size: 12px; color: #4b5563;
+    }
+    .legend-bar span { display: flex; align-items: center; gap: 4px; }
+
+    /* Block sections */
+    .block-section {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .block-header {
+      background: #f8faff;
+      border-bottom: 1.5px solid #e0e7ff;
+      padding: 12px 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .block-number {
+      background: #6366f1; color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+    .block-title {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; color: #3730a3;
+    }
+    .block-desc {
+      font-size: 12px; color: #6b7280; padding: 8px 18px 0; line-height: 1.5;
+    }
+    .block-body { padding: 16px 18px; }
+
+    .sub-section-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #6366f1; margin: 14px 0 10px;
+      padding-bottom: 6px; border-bottom: 1px solid #e0e7ff;
+    }
+    .sub-section-label:first-child { margin-top: 0; }
 
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #9ca3af;
-      margin-bottom: 14px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #9ca3af; margin-bottom: 14px;
     }
-
     .divider { border: none; border-top: 1px solid #f3f4f6; margin: 1.5rem 0; }
 
-    .form-row { display: grid; gap: 16px; margin-bottom: 16px; }
+    .form-row { display: grid; gap: 14px; margin-bottom: 14px; }
     .form-row.cols-1-2 { grid-template-columns: 1fr 2fr; }
     .form-row.cols-3   { grid-template-columns: 1fr 1fr 1fr; }
     .form-row.cols-2-1 { grid-template-columns: 2fr 1fr; }
+    .form-row.cols-2   { grid-template-columns: 1fr 1fr; }
 
     .field { display: flex; flex-direction: column; gap: 5px; }
 
     label {
-      font-size: 13px;
-      font-weight: 500;
-      color: #374151;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-size: 13px; font-weight: 500; color: #374151;
+      display: flex; align-items: flex-start; gap: 4px; line-height: 1.4;
     }
 
-    label .req { color: #ef4444; font-size: 12px; }
-    label .opt { color: #9ca3af; font-size: 11px; font-weight: 400; }
+    label .req { color: #ef4444; font-size: 12px; flex-shrink: 0; }
+    label .opt { color: #9ca3af; font-size: 11px; font-weight: 400; flex-shrink: 0; }
+    label .cond { color: #f59e0b; font-size: 11px; font-weight: 400; flex-shrink: 0; }
 
     input[type="text"],
     input[type="email"],
@@ -83,7 +125,7 @@
     select { height: 40px; }
 
     textarea {
-      height: 90px;
+      height: 80px;
       padding: 10px 12px;
       resize: vertical;
     }
@@ -104,18 +146,21 @@
     }
 
     input[readonly] {
-      background: #f9fafb;
-      color: #6b7280;
-      cursor: default;
+      background: #f9fafb; color: #6b7280; cursor: default;
     }
-
     input[readonly]:focus { border-color: #d1d5db; box-shadow: none; }
 
-    /* Radio buttons */
-    .radio-group { display: flex; gap: 16px; margin-top: 2px; }
+    /* Radio / Checkbox groups */
+    .radio-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2px; }
     .radio-option { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .radio-option input[type="radio"] { width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; }
-    .radio-option span { font-size: 14px; color: #374151; }
+    .radio-option input[type="radio"],
+    .radio-option input[type="checkbox"] { width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; flex-shrink: 0; }
+    .radio-option span { font-size: 13px; color: #374151; }
+
+    .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .checkbox-option { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+    .checkbox-option input[type="checkbox"] { width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; margin-top: 2px; flex-shrink: 0; }
+    .checkbox-option span { font-size: 13px; color: #374151; line-height: 1.4; }
 
     /* CEP */
     .cep-wrapper { position: relative; }
@@ -138,7 +183,7 @@
       border: 1.5px solid #6ee7b7;
       border-radius: 10px;
       padding: 14px 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: none;
     }
     .dist-box .dist-title {
@@ -151,7 +196,7 @@
     .dist-item .dist-value { font-size: 16px; font-weight: 700; color: #059669; }
     .dist-item .dist-time  { font-size: 11px; color: #9ca3af; margin-top: 1px; }
 
-    /* Seções condicionais */
+    /* Conditional sections */
     .conditional-section {
       display: none;
       background: #f8faff;
@@ -165,17 +210,20 @@
       letter-spacing: 0.06em; color: #6366f1; margin-bottom: 12px;
     }
 
-    /* Other field */
     .other-field { display: none; margin-top: 8px; }
     .other-field input, .other-field textarea { width: 100%; }
 
-    /* Hint text */
     .field-hint {
-      font-size: 12px;
-      color: #9ca3af;
-      font-style: italic;
-      margin-top: 3px;
-      line-height: 1.4;
+      font-size: 12px; color: #9ca3af;
+      font-style: italic; margin-top: 3px; line-height: 1.4;
+    }
+
+    /* Internal data badge */
+    .internal-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 6px; padding: 10px 12px;
+      font-size: 12px; color: #1d4ed8; width: 100%;
     }
 
     .btn-submit {
@@ -212,7 +260,8 @@
       .card { padding: 1.5rem 1.25rem; }
       .form-row.cols-1-2,
       .form-row.cols-3,
-      .form-row.cols-2-1 { grid-template-columns: 1fr; }
+      .form-row.cols-2-1,
+      .form-row.cols-2 { grid-template-columns: 1fr; }
       .dist-values { grid-template-columns: 1fr; }
     }
   </style>
@@ -221,328 +270,1334 @@
 
 <div class="card">
   <div class="card-header">
-    <h1>Levantamento de dados cadastrais</h1>
-    <p>Todos os campos marcados com * são obrigatórios. Ao digitar o CEP, o endereço e a distância serão preenchidos automaticamente.</p>
+    <div class="logo-text">Grupo Águia</div>
+    <h1>Cadastro de Governança de Pessoas</h1>
+    <p>Base Corporativa · Confidencial · Recadastramento Anual Obrigatório</p>
+    <p style="margin-top:8px;">Este formulário tem como objetivo atualizar e complementar a base cadastral dos colaboradores, permitindo melhor gestão administrativa, trabalhista, compliance, auditoria interna, benefícios e governança corporativa. As informações serão utilizadas exclusivamente para finalidades internas legítimas.</p>
+  </div>
+
+  <div class="legend-bar">
+    <span>🔴 Obrigatório</span>
+    <span>🟡 Condicional (responder somente se resposta anterior = SIM)</span>
+    <span>⚪ Opcional</span>
   </div>
 
   <form id="form-principal" novalidate>
 
     <input type="hidden" name="access_key" value="ee573af7-22a7-4549-beea-f39393c6e283" />
-    <input type="hidden" name="subject" value="Nova resposta - Levantamento de Dados Cadastrais" />
-    <input type="hidden" name="from_name" value="Levantamento de Dados Cadastrais" />
+    <input type="hidden" name="subject" value="Nova resposta - Cadastro de Governança Grupo Águia" />
+    <input type="hidden" name="from_name" value="Cadastro de Governança Grupo Águia" />
     <input type="hidden" name="distancia_km" id="hidden_distancia" value="" />
     <input type="hidden" name="tempo_viagem" id="hidden_tempo" value="" />
     <input type="checkbox" name="botcheck" style="display:none" />
 
-    <!-- ── DADOS PESSOAIS ─────────────────────────────────── -->
-    <p class="section-label">Dados pessoais</p>
-
-    <div class="form-row" style="grid-template-columns:1fr;">
-      <div class="field">
-        <label for="nome">Nome completo <span class="req">*</span></label>
-        <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required />
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 01 · IDENTIFICAÇÃO E DADOS PESSOAIS
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 01</span>
+        <span class="block-title">Identificação e Dados Pessoais</span>
       </div>
-    </div>
+      <p class="block-desc">Dados cadastrais básicos. Preencha com as informações conforme documento oficial.</p>
+      <div class="block-body">
 
-    <div class="form-row" style="grid-template-columns:1fr;">
-      <div class="field">
-        <label for="email">E-mail <span class="req">*</span></label>
-        <input type="email" id="email" name="email" placeholder="email@exemplo.com" required />
-      </div>
-    </div>
-
-    <hr class="divider" />
-
-    <!-- ── UNIDADE DE NEGÓCIO ─────────────────────────────── -->
-    <p class="section-label">Unidade de negócio</p>
-
-    <div class="form-row" style="grid-template-columns:1fr;">
-      <div class="field">
-        <label for="unidade">Unidade de negócio <span class="req">*</span></label>
-        <select id="unidade" name="unidade" required>
-          <option value="" disabled selected>Selecione...</option>
-          <option>4BTS</option>
-          <option>CSC</option>
-          <option>Nest Travel</option>
-          <option>Pallas</option>
-          <option>Pop Tur</option>
-          <option>Stella Barros</option>
-          <option>Torcida Brasil</option>
-        </select>
-      </div>
-    </div>
-
-    <hr class="divider" />
-
-    <!-- ── PERFIL FAMILIAR ────────────────────────────────── -->
-    <p class="section-label">Perfil familiar</p>
-
-    <!-- Estado civil -->
-    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-      <div class="field">
-        <label for="estado_civil">Estado civil <span class="req">*</span></label>
-        <select id="estado_civil" name="estado_civil" required onchange="toggleOther('estado_civil','estado-civil-outro')">
-          <option value="" disabled selected>Selecione...</option>
-          <option>Solteiro(a)</option>
-          <option>Casado(a)</option>
-          <option>Viúvo(a)</option>
-          <option>Divorciado(a)</option>
-          <option value="Outro">Outro</option>
-        </select>
-        <div class="other-field" id="estado-civil-outro">
-          <input type="text" name="estado_civil_outro" placeholder="Descreva seu estado civil..." />
-        </div>
-      </div>
-    </div>
-
-    <!-- Filhos -->
-    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-      <div class="field">
-        <label>Você possui filhos? <span class="req">*</span></label>
-        <div class="radio-group">
-          <label class="radio-option">
-            <input type="radio" name="possui_filhos" value="Sim" onchange="toggleFilhos()" required />
-            <span>Sim</span>
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="possui_filhos" value="Não" onchange="toggleFilhos()" />
-            <span>Não</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seção condicional: filhos -->
-    <div class="conditional-section" id="secao-filhos">
-      <div class="section-inner-label">Informações sobre filhos</div>
-
-      <!-- Quantos filhos -->
-      <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-        <div class="field">
-          <label for="qtd_filhos">Quantos filhos? <span class="req">*</span></label>
-          <select id="qtd_filhos" name="qtd_filhos" onchange="toggleOther('qtd_filhos','qtd-filhos-outro')">
-            <option value="" disabled selected>Selecione...</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option value="Outro">Outro</option>
-          </select>
-          <div class="other-field" id="qtd-filhos-outro">
-            <input type="text" name="qtd_filhos_outro" placeholder="Informe a quantidade..." />
+        <!-- Nome -->
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="nome">Nome completo <span class="req">*</span></label>
+            <input type="text" id="nome" name="nome" placeholder="Nome exato conforme documento oficial" required />
           </div>
         </div>
-      </div>
 
-      <!-- Filho com deficiência -->
-      <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-        <div class="field">
-          <label>Seu filho possui algum tipo de deficiência com laudo? <span class="req">*</span></label>
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="filho_deficiencia" value="Sim" onchange="toggleDeficiencia()" />
-              <span>Sim</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="filho_deficiencia" value="Não" onchange="toggleDeficiencia()" />
-              <span>Não</span>
-            </label>
+        <!-- Emails -->
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="email_corp">E-mail corporativo <span class="req">*</span></label>
+            <input type="email" id="email_corp" name="email_corporativo" placeholder="nome@grupoaguia.com.br" required />
+          </div>
+          <div class="field">
+            <label for="email_pessoal">E-mail pessoal <span class="req">*</span></label>
+            <input type="email" id="email_pessoal" name="email_pessoal" placeholder="nome@email.com" required />
           </div>
         </div>
-      </div>
 
-      <!-- Seção condicional: deficiência -->
-      <div class="conditional-section" id="secao-deficiencia" style="background:#fff8f0;border-color:#fed7aa;">
-        <div class="section-inner-label" style="color:#ea580c;">Sobre a deficiência</div>
-        <div class="field" style="margin-bottom:12px;">
-          <label for="tipo_deficiencia">Qual a deficiência? <span class="req">*</span></label>
-          <input type="text" id="tipo_deficiencia" name="tipo_deficiencia" placeholder="Descreva o tipo de deficiência..." />
+        <!-- Telefones -->
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="tel_pessoal">Telefone pessoal (WhatsApp preferencial) <span class="req">*</span></label>
+            <input type="tel" id="tel_pessoal" name="telefone_pessoal" placeholder="(DDD) 9XXXX-XXXX" required />
+          </div>
+          <div class="field">
+            <label for="tel_alternativo">Telefone alternativo <span class="opt">(opcional)</span></label>
+            <input type="tel" id="tel_alternativo" name="telefone_alternativo" placeholder="(DDD) 9XXXX-XXXX" />
+          </div>
+        </div>
+
+        <!-- Estado civil -->
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="estado_civil">Estado civil <span class="req">*</span></label>
+            <select id="estado_civil" name="estado_civil" required onchange="toggleOther('estado_civil','estado-civil-outro')">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Solteiro(a)</option>
+              <option>Casado(a)</option>
+              <option>União Estável</option>
+              <option>Divorciado(a)</option>
+              <option>Separado(a)</option>
+              <option>Viúvo(a)</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <div class="other-field" id="estado-civil-outro">
+              <input type="text" name="estado_civil_outro" placeholder="Descreva seu estado civil..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div style="font-size:12px;font-weight:600;color:#374151;margin:14px 0 8px;">Endereço residencial completo</div>
+
+        <div class="form-row cols-1-2">
+          <div class="field">
+            <label for="cep">CEP <span class="req">*</span></label>
+            <div class="cep-wrapper">
+              <input type="tel" id="cep" name="cep" maxlength="9"
+                     placeholder="00000-000" autocomplete="postal-code" required />
+              <div class="cep-spinner" id="spinner"></div>
+            </div>
+            <span class="cep-status" id="cep-status"></span>
+          </div>
+          <div class="field">
+            <label for="logradouro">Logradouro <span class="req">*</span></label>
+            <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Avenida..." readonly required />
+          </div>
+        </div>
+
+        <div class="form-row cols-3">
+          <div class="field">
+            <label for="numero">Número <span class="req">*</span></label>
+            <input type="text" id="numero" name="numero" placeholder="Ex: 123" required />
+          </div>
+          <div class="field">
+            <label for="complemento">Complemento <span class="opt">(opcional)</span></label>
+            <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco..." />
+          </div>
+          <div class="field">
+            <label for="bairro">Bairro <span class="req">*</span></label>
+            <input type="text" id="bairro" name="bairro" placeholder="Bairro" readonly required />
+          </div>
+        </div>
+
+        <div class="form-row cols-2-1">
+          <div class="field">
+            <label for="cidade">Cidade <span class="req">*</span></label>
+            <input type="text" id="cidade" name="cidade" placeholder="Cidade" readonly required />
+          </div>
+          <div class="field">
+            <label for="estado">Estado <span class="req">*</span></label>
+            <input type="text" id="estado" name="estado" placeholder="UF" readonly required />
+          </div>
+        </div>
+
+        <!-- Distância calculada -->
+        <div class="dist-box" id="dist-box">
+          <div class="dist-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.24 1 2 3.24 2 6c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 6 1.5 1.5 0 017 7.5z" fill="#059669"/></svg>
+            Distância até Av. das Américas, 3434 — Barra da Tijuca
+          </div>
+          <div class="dist-values" id="dist-values">
+            <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:6px;">
+              <div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#059669;border-radius:50%;animation:spin 0.7s linear infinite"></div>
+              Calculando rota...
+            </div>
+          </div>
+        </div>
+
+        <!-- Meio de transporte -->
+        <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+          <div class="field">
+            <label for="modal">Meio de transporte principal para o trabalho <span class="req">*</span></label>
+            <select id="modal" name="modal" required onchange="toggleOther('modal','modal-outro')">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Carro próprio</option>
+              <option>Moto</option>
+              <option>Transporte público</option>
+              <option>Van/Fretado</option>
+              <option>A pé</option>
+              <option>Bicicleta</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <div class="other-field" id="modal-outro">
+              <input type="text" name="modal_outro" placeholder="Descreva o modal utilizado..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Tempo de deslocamento -->
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="tempo_ida">Tempo médio de deslocamento (ida) <span class="req">*</span></label>
+            <select id="tempo_ida" name="tempo_ida" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Até 30 min</option>
+              <option>30–60 min</option>
+              <option>1–2 horas</option>
+              <option>Mais de 2 horas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tempo_volta">Tempo médio de deslocamento (volta) <span class="req">*</span></label>
+            <select id="tempo_volta" name="tempo_volta" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Até 30 min</option>
+              <option>30–60 min</option>
+              <option>1–2 horas</option>
+              <option>Mais de 2 horas</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filhos -->
+        <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px; margin-top:4px;">
+          <div class="field">
+            <label>Você possui filhos? <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="possui_filhos" value="Sim" onchange="toggleFilhos()" required />
+                <span>Sim</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="possui_filhos" value="Não" onchange="toggleFilhos()" />
+                <span>Não</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-filhos">
+          <div class="section-inner-label">Informações sobre filhos</div>
+          <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+            <div class="field">
+              <label for="qtd_filhos">Quantos filhos? <span class="req">*</span></label>
+              <select id="qtd_filhos" name="qtd_filhos" onchange="toggleOther('qtd_filhos','qtd-filhos-outro')">
+                <option value="" disabled selected>Selecione...</option>
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                <option value="Outro">Outro</option>
+              </select>
+              <div class="other-field" id="qtd-filhos-outro">
+                <input type="text" name="qtd_filhos_outro" placeholder="Informe a quantidade..." />
+              </div>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+            <div class="field">
+              <label>Seu filho possui algum tipo de deficiência com laudo? <span class="req">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="filho_deficiencia" value="Sim" onchange="toggleDeficiencia()" />
+                  <span>Sim</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="filho_deficiencia" value="Não" onchange="toggleDeficiencia()" />
+                  <span>Não</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="conditional-section" id="secao-deficiencia" style="background:#fff8f0;border-color:#fed7aa;">
+            <div class="section-inner-label" style="color:#ea580c;">Sobre a deficiência</div>
+            <div class="field" style="margin-bottom:12px;">
+              <label for="tipo_deficiencia">Qual a deficiência? <span class="req">*</span></label>
+              <input type="text" id="tipo_deficiencia" name="tipo_deficiencia" placeholder="Descreva o tipo de deficiência..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Situação familiar -->
+        <div class="form-row" style="grid-template-columns:1fr; margin-top:14px;">
+          <div class="field">
+            <label for="situacao_familiar">Situação familiar <span class="opt">(opcional)</span></label>
+            <p class="field-hint">Caso queira, compartilhe brevemente seu contexto familiar (ex: pais vivos, dependentes, outras responsabilidades).</p>
+            <textarea id="situacao_familiar" name="situacao_familiar" placeholder="Descreva brevemente sua situação familiar..."></textarea>
+          </div>
         </div>
 
       </div>
     </div>
 
-    <!-- Situação familiar -->
-    <div class="form-row" style="grid-template-columns:1fr; margin-top:16px;">
-      <div class="field">
-        <label for="situacao_familiar">Situação familiar <span class="opt">(opcional)</span></label>
-        <p class="field-hint">Caso queira, compartilhe brevemente seu contexto familiar (ex: pais vivos, dependentes, outras responsabilidades familiares).</p>
-        <textarea id="situacao_familiar" name="situacao_familiar" placeholder="Descreva brevemente sua situação familiar..."></textarea>
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 02 · EMPRESA, UNIDADE E LOCAL DE TRABALHO
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 02</span>
+        <span class="block-title">Empresa, Unidade e Local de Trabalho</span>
       </div>
-    </div>
+      <p class="block-desc">Essencial para relatórios corporativos, orçamento e infraestrutura.</p>
+      <div class="block-body">
 
-    <hr class="divider" />
-
-    <!-- ── CONTATOS DE EMERGÊNCIA ──────────────────────────── -->
-    <p class="section-label">Contato de emergência</p>
-
-    <div class="form-row" style="grid-template-columns:1fr;">
-      <div class="field">
-        <label for="emergencia_nome">Nome do contato <span class="req">*</span></label>
-        <input type="text" id="emergencia_nome" name="emergencia_nome" placeholder="Nome completo" required />
-      </div>
-    </div>
-
-    <div class="form-row" style="grid-template-columns:1fr;">
-      <div class="field">
-        <label for="emergencia_parentesco">Grau de parentesco ou relação <span class="req">*</span></label>
-        <input type="text" id="emergencia_parentesco" name="emergencia_parentesco" placeholder="Ex: Cônjuge, Pai, Amigo..." required />
-      </div>
-    </div>
-
-    <div class="form-row cols-1-2">
-      <div class="field">
-        <label for="emergencia_tel1">Telefone principal <span class="req">*</span></label>
-        <input type="tel" id="emergencia_tel1" name="emergencia_tel1" placeholder="(00) 00000-0000" required />
-      </div>
-      <div class="field">
-        <label for="emergencia_tel2">Telefone alternativo <span class="opt">(opcional)</span></label>
-        <input type="tel" id="emergencia_tel2" name="emergencia_tel2" placeholder="(00) 00000-0000" />
-      </div>
-    </div>
-
-    <hr class="divider" />
-
-    <!-- ── ENDEREÇO RESIDENCIAL ───────────────────────────── -->
-    <p class="section-label">Endereço residencial</p>
-
-    <div class="form-row cols-1-2">
-      <div class="field">
-        <label for="cep">CEP <span class="req">*</span></label>
-        <div class="cep-wrapper">
-          <input type="tel" id="cep" name="cep" maxlength="9"
-                 placeholder="00000-000" autocomplete="postal-code" required />
-          <div class="cep-spinner" id="spinner"></div>
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="empresa">Empresa / Unidade à qual pertence <span class="req">*</span></label>
+            <select id="empresa" name="empresa" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Pallas</option>
+              <option>4BTS</option>
+              <option>Pop Tur</option>
+              <option>Nest Travel</option>
+              <option>Stella Barros</option>
+              <option>CSC</option>
+              <option>Torcida Brasil</option>
+              <option value="Outra">Outra</option>
+            </select>
+          </div>
         </div>
-        <span class="cep-status" id="cep-status"></span>
-      </div>
-      <div class="field">
-        <label for="logradouro">Logradouro <span class="req">*</span></label>
-        <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Avenida..." readonly required />
-      </div>
-    </div>
 
-    <div class="form-row cols-3">
-      <div class="field">
-        <label for="numero">Número <span class="req">*</span></label>
-        <input type="text" id="numero" name="numero" placeholder="Ex: 123" required />
-      </div>
-      <div class="field">
-        <label for="complemento">Complemento</label>
-        <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco..." />
-      </div>
-      <div class="field">
-        <label for="bairro">Bairro <span class="req">*</span></label>
-        <input type="text" id="bairro" name="bairro" placeholder="Bairro" readonly required />
-      </div>
-    </div>
-
-    <div class="form-row cols-2-1">
-      <div class="field">
-        <label for="cidade">Cidade <span class="req">*</span></label>
-        <input type="text" id="cidade" name="cidade" placeholder="Cidade" readonly required />
-      </div>
-      <div class="field">
-        <label for="estado">Estado <span class="req">*</span></label>
-        <input type="text" id="estado" name="estado" placeholder="UF" readonly required />
-      </div>
-    </div>
-
-    <!-- Caixa de distância calculada -->
-    <div class="dist-box" id="dist-box">
-      <div class="dist-title">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.24 1 2 3.24 2 6c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 6 1.5 1.5 0 017 7.5z" fill="#059669"/></svg>
-        Distância até Av. das Américas, 3434 — Barra da Tijuca
-      </div>
-      <div class="dist-values" id="dist-values">
-        <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:6px;">
-          <div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#059669;border-radius:50%;animation:spin 0.7s linear infinite"></div>
-          Calculando rota...
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="unidade">Unidade de negócio <span class="req">*</span></label>
+            <select id="unidade" name="unidade" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>4BTS</option>
+              <option>CSC</option>
+              <option>Nest Travel</option>
+              <option>Pallas</option>
+              <option>Pop Tur</option>
+              <option>Stella Barros</option>
+              <option>Torcida Brasil</option>
+            </select>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <hr class="divider" />
-
-    <!-- ── DESLOCAMENTO ───────────────────────────────────── -->
-    <p class="section-label">Deslocamento</p>
-
-    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-      <div class="field">
-        <label for="modal">Modal principal utilizado <span class="req">*</span></label>
-        <select id="modal" name="modal" required onchange="toggleOther('modal','modal-outro')">
-          <option value="" disabled selected>Selecione...</option>
-          <option>Carro próprio</option>
-          <option>Moto própria</option>
-          <option>Carona</option>
-          <option>Transporte público (ônibus, metrô, trem, BRT)</option>
-          <option>Aplicativo (Uber, 99, etc.)</option>
-          <option value="Outra">Outra</option>
-        </select>
-        <div class="other-field" id="modal-outro">
-          <input type="text" name="modal_outro" placeholder="Descreva o modal utilizado..." />
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="gestor_direto">Gestor direto atual <span class="req">*</span></label>
+            <input type="text" id="gestor_direto" name="gestor_direto" placeholder="Nome do gestor direto" required />
+            <p class="field-hint">Se não constar em lista: informe o nome completo.</p>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-      <div class="field">
-        <label for="tempo_ida">Tempo médio de deslocamento (ida) <span class="req">*</span></label>
-        <select id="tempo_ida" name="tempo_ida" required onchange="toggleOther('tempo_ida','tempo-ida-outro')">
-          <option value="" disabled selected>Selecione...</option>
-          <option>Menos de 30 min</option>
-          <option>30–60 min</option>
-          <option>1h–1h30min</option>
-          <option>1h30–2h</option>
-          <option value="Outra">Outra</option>
-        </select>
-        <div class="other-field" id="tempo-ida-outro">
-          <input type="text" name="tempo_ida_outro" placeholder="Informe o tempo de deslocamento (ida)..." />
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="local_trabalho">Local principal de trabalho <span class="req">*</span></label>
+            <select id="local_trabalho" name="local_trabalho" required onchange="toggleOther('local_trabalho','local-outro')">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sede MHS</option>
+              <option>Rio de Janeiro — Sede</option>
+              <option>São Paulo — Nest Travel</option>
+              <option>São Paulo — Stella Barros</option>
+              <option>Operação externa maior parte do tempo</option>
+              <option>Cliente maior parte do tempo</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <div class="other-field" id="local-outro">
+              <input type="text" name="local_trabalho_outro" placeholder="Informe o local de trabalho..." />
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
 
-    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
-      <div class="field">
-        <label for="tempo_volta">Tempo médio de deslocamento (volta) <span class="req">*</span></label>
-        <select id="tempo_volta" name="tempo_volta" required onchange="toggleOther('tempo_volta','tempo-volta-outro')">
-          <option value="" disabled selected>Selecione...</option>
-          <option>Menos de 30 min</option>
-          <option>30–60 min</option>
-          <option>1h–1h30min</option>
-          <option>1h30–2h</option>
-          <option value="Outra">Outra</option>
-        </select>
-        <div class="other-field" id="tempo-volta-outro">
-          <input type="text" name="tempo_volta_outro" placeholder="Informe o tempo de deslocamento (volta)..." />
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 03 · RELAÇÕES FAMILIARES E VÍNCULOS INTERNOS
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 03</span>
+        <span class="block-title">Relações Familiares e Vínculos Internos no Grupo</span>
+      </div>
+      <p class="block-desc">Um dos blocos mais críticos para governança. Transparência — não proibição. Cônjuge, namorado(a), ex-cônjuge com vínculo ativo, coabitantes e dependentes econômicos devem ser declarados.</p>
+      <div class="block-body">
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="vinculo_interno">Você possui relação familiar, conjugal, afetiva relevante, de convivência, de dependência econômica ou de afinidade com algum colaborador, gestor, sócio, prestador ou terceiro que atue no Grupo Águia? <span class="req">*</span></label>
+            <select id="vinculo_interno" name="vinculo_interno" required onchange="toggleConditional('vinculo_interno','secao-vinculo-interno',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option>
+              <option>Sim — familiar direto</option>
+              <option>Sim — familiar indireto</option>
+              <option>Sim — cônjuge/companheiro(a)/união estável</option>
+              <option>Sim — namorado(a) ou relação afetiva relevante</option>
+              <option>Sim — enteado(a), padrasto, madrasta, sogro(a), cunhado(a)</option>
+              <option>Sim — pessoa que mora comigo</option>
+              <option>Sim — dependência econômica</option>
+              <option>Tenho dúvida</option>
+            </select>
+          </div>
         </div>
+
+        <div class="conditional-section" id="secao-vinculo-interno">
+          <div class="section-inner-label">Preencher somente se a resposta acima for SIM</div>
+
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="vinculo_nome">Nome da pessoa (vinculada ao Grupo) <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="vinculo_nome" name="vinculo_interno_nome" placeholder="Nome completo" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="vinculo_empresa">Empresa / Unidade onde essa pessoa trabalha no Grupo <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_empresa" name="vinculo_interno_empresa">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Pallas</option><option>4BTS</option><option>Pop Tur</option>
+                <option>Nest Travel</option><option>Stella Barros</option><option>CSC</option>
+                <option>Torcida Brasil</option><option>Outro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vinculo_area">Área de atuação dessa pessoa <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="vinculo_area" name="vinculo_interno_area" placeholder="Ex: Financeiro, Operações..." />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="vinculo_tipo_relacao">Tipo de relação com você <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_tipo_relacao" name="vinculo_interno_tipo_relacao">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Cônjuge</option><option>Companheiro(a)</option><option>Namorado(a)</option>
+                <option>Pai/Mãe</option><option>Filho(a)</option><option>Irmão/Irmã</option>
+                <option>Cunhado(a)</option><option>Sogro(a)</option><option>Padrasto/Madrasta</option>
+                <option>Enteado(a)</option><option>Primo(a)</option><option>Coabitante</option>
+                <option>Dependente econômico</option><option>Outro familiar</option><option>Outro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vinculo_subordinacao">Existe subordinação direta ou indireta entre vocês? <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_subordinacao" name="vinculo_interno_subordinacao">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Não</option>
+                <option>Sim — sou superior hierárquico</option>
+                <option>Sim — ela/ele é meu superior</option>
+                <option>Sim — subordinação indireta</option>
+                <option>Não sei</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="vinculo_mesma_area">Vocês trabalham na mesma área, projeto, cliente ou operação? <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_mesma_area" name="vinculo_interno_mesma_area">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Eventualmente</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vinculo_decisoes_sobre">Você participa de decisões sobre contratação, promoção, avaliação, remuneração, escala ou aprovações que possam impactar essa pessoa? <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_decisoes_sobre" name="vinculo_interno_decisoes_sobre">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Eventualmente</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="vinculo_decisoes_voce">Essa pessoa participa de decisões que possam impactar você? <span class="cond">🟡 Condicional</span></label>
+              <select id="vinculo_decisoes_voce" name="vinculo_interno_decisoes_voce">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Eventualmente</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="vinculo_obs">Observações adicionais <span class="opt">(opcional)</span></label>
+              <textarea id="vinculo_obs" name="vinculo_interno_observacoes" placeholder="Informações adicionais que julgar relevante..."></textarea>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- ── LGPD ───────────────────────────────────────────── -->
-    <hr class="divider" />
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 04 · RELAÇÕES EXTERNAS E INTERESSES RELEVANTES
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 04</span>
+        <span class="block-title">Relações Externas e Interesses Relevantes</span>
+      </div>
+      <p class="block-desc">A existência de atividade externa ou relação com fornecedor/parceiro não implica irregularidade. Objetivo: transparência e prevenção.</p>
+      <div class="block-body">
 
+        <!-- 4.1 -->
+        <div class="sub-section-label">4.1 — Participação econômica em fornecedor, cliente, parceiro ou concorrente</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="interesse_economico">Você possui participação societária, remuneração, comissão, acordo comercial ou qualquer interesse econômico em empresa fornecedora, cliente, parceira ou concorrente do Grupo Águia? <span class="req">*</span></label>
+            <select id="interesse_economico" name="interesse_economico" required onchange="toggleConditional('interesse_economico','secao-interesse-economico',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option>
+              <option>Sim — em fornecedor</option>
+              <option>Sim — em cliente</option>
+              <option>Sim — em parceiro</option>
+              <option>Sim — em concorrente</option>
+              <option>Sim — outra empresa do setor</option>
+              <option>Não sei / Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-interesse-economico">
+          <div class="section-inner-label">Preencher se SIM em 4.1</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="ie_empresa">Nome da empresa <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="ie_empresa" name="ie_nome_empresa" placeholder="Razão social ou nome fantasia" />
+            </div>
+            <div class="field">
+              <label for="ie_natureza">Natureza do interesse <span class="cond">🟡 Condicional</span></label>
+              <select id="ie_natureza" name="ie_natureza_interesse">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Participação societária</option><option>Comissão</option><option>Remuneração</option>
+                <option>Contrato</option><option>Indicação comercial</option><option>Parceria</option><option>Outro</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="ie_area">Essa relação envolve sua área, função ou decisões sob sua responsabilidade? <span class="cond">🟡 Condicional</span></label>
+              <select id="ie_area" name="ie_envolve_area">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Parcialmente</option><option>Não sei</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ie_desde">Desde quando existe essa relação? (ano aproximado) <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="ie_desde" name="ie_desde_ano" placeholder="Ex.: 2021" />
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ie_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="ie_obs" name="ie_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4.2 -->
+        <div class="sub-section-label">4.2 — Atividade profissional externa</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="atividade_externa">Você exerce alguma atividade profissional externa, remunerada ou não, além da sua atuação no Grupo Águia? <span class="req">*</span></label>
+            <select id="atividade_externa" name="atividade_externa" required onchange="toggleConditional('atividade_externa','secao-atividade-externa',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option>
+              <option>Sim — somente fora do horário/fins de semana</option>
+              <option>Sim — dias úteis, fora do horário</option>
+              <option>Sim — pode coincidir com a jornada</option>
+              <option>Sim — eventual ou pontual</option>
+              <option>Prefiro detalhar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-atividade-externa">
+          <div class="section-inner-label">Preencher se SIM em 4.2</div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ae_descricao">Descrição da atividade externa <span class="cond">🟡 Condicional</span></label>
+              <textarea id="ae_descricao" name="ae_descricao" placeholder="Descreva a atividade realizada..."></textarea>
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="ae_remunerada">É remunerada? <span class="cond">🟡 Condicional</span></label>
+              <select id="ae_remunerada" name="ae_remunerada">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ae_relacao_grupo">Tem relação com turismo, eventos, tecnologia, financeiro, fornecedores, clientes ou concorrentes do Grupo? <span class="cond">🟡 Condicional</span></label>
+              <select id="ae_relacao_grupo" name="ae_relacao_grupo">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Parcialmente</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ae_usa_recurso">Utiliza algum recurso, informação, contato ou estrutura do Grupo? <span class="cond">🟡 Condicional</span></label>
+              <select id="ae_usa_recurso" name="ae_usa_recurso_grupo">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ae_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="ae_obs" name="ae_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4.3 -->
+        <div class="sub-section-label">4.3 — Indicação ou contratação de fornecedor com relação pessoal</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="indicacao_fornecedor">Você já indicou, recomendou, contratou, aprovou ou participou de decisão de contratação de fornecedor, prestador ou parceiro com quem possui relação pessoal, familiar, econômica ou profissional externa? <span class="req">*</span></label>
+            <select id="indicacao_fornecedor" name="indicacao_fornecedor" required onchange="toggleConditional('indicacao_fornecedor','secao-indicacao-fornecedor',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option><option>Sim</option><option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-indicacao-fornecedor">
+          <div class="section-inner-label">Preencher se SIM em 4.3</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="if_nome">Nome do fornecedor / prestador / parceiro <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="if_nome" name="if_nome_fornecedor" placeholder="Nome da empresa ou pessoa" />
+            </div>
+            <div class="field">
+              <label for="if_tipo_relacao">Tipo de relação existente com você <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="if_tipo_relacao" name="if_tipo_relacao" placeholder="Ex: Familiar, Amigo..." />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="if_participacao">Qual foi sua participação? <span class="cond">🟡 Condicional</span></label>
+              <select id="if_participacao" name="if_participacao">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Indicação</option><option>Recomendação</option><option>Aprovação</option>
+                <option>Contratação</option><option>Renovação</option><option>Pagamento</option><option>Outro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="if_ativa">A contratação ainda está ativa? <span class="cond">🟡 Condicional</span></label>
+              <select id="if_ativa" name="if_contratacao_ativa">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="if_quem_participou">Quem mais participou da decisão? (nome ou cargo) <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="if_quem_participou" name="if_quem_participou" placeholder="Nome ou cargo" />
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="if_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="if_obs" name="if_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4.4 -->
+        <div class="sub-section-label">4.4 — Familiares ou pessoas próximas em fornecedores, clientes, parceiros ou concorrentes</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="familiar_externo">Você possui familiar, cônjuge, companheiro(a), pessoa com vínculo afetivo relevante ou pessoa próxima trabalhando em fornecedor, cliente, parceiro ou concorrente do Grupo? <span class="req">*</span></label>
+            <select id="familiar_externo" name="familiar_externo" required onchange="toggleConditional('familiar_externo','secao-familiar-externo',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option>
+              <option>Sim — em fornecedor</option>
+              <option>Sim — em cliente</option>
+              <option>Sim — em parceiro</option>
+              <option>Sim — em concorrente</option>
+              <option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-familiar-externo">
+          <div class="section-inner-label">Preencher se SIM em 4.4</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="fe_nome">Nome da pessoa <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="fe_nome" name="fe_nome_pessoa" placeholder="Nome completo" />
+            </div>
+            <div class="field">
+              <label for="fe_empresa">Empresa onde trabalha <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="fe_empresa" name="fe_empresa" placeholder="Nome da empresa" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="fe_tipo_relacao">Tipo de relação com você <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="fe_tipo_relacao" name="fe_tipo_relacao" placeholder="Ex: Cônjuge, Irmão..." />
+            </div>
+            <div class="field">
+              <label for="fe_relacao_comercial">Essa empresa possui relação comercial atual com o Grupo? <span class="cond">🟡 Condicional</span></label>
+              <select id="fe_relacao_comercial" name="fe_relacao_comercial_grupo">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="fe_participa_decisoes">Você participa de decisões envolvendo essa empresa? <span class="cond">🟡 Condicional</span></label>
+              <select id="fe_participa_decisoes" name="fe_participa_decisoes">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Eventualmente</option><option>Não sei</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="fe_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="fe_obs" name="fe_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4.5 -->
+        <div class="sub-section-label">4.5 — Convites, cortesias e benefícios recebidos de terceiros</div>
+        <p class="field-hint" style="margin-bottom:10px;">No setor de turismo/eventos, famtrips e cortesias comerciais podem ser legítimas. Objetivo: registrar, não presumir irregularidade.</p>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="cortesias">Nos últimos 12 meses, você recebeu convite, cortesia, viagem, hospedagem, passagem, ingresso, brinde, famtrip, visita técnica de fornecedor, cliente, parceiro ou terceiro relacionado ao Grupo? <span class="req">*</span></label>
+            <select id="cortesias" name="cortesias_recebidas" required onchange="toggleConditional('cortesias','secao-cortesias',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option>
+              <option>Sim — evento/reunião comercial</option>
+              <option>Sim — famtrip/visita técnica</option>
+              <option>Sim — viagem/hospedagem/passagem</option>
+              <option>Sim — convite/ingresso</option>
+              <option>Sim — brinde ou presente</option>
+              <option>Sim — outro</option>
+              <option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-cortesias">
+          <div class="section-inner-label">Preencher se SIM em 4.5</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="cort_quem">Quem ofereceu (empresa ou pessoa) <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cort_quem" name="cort_quem_ofereceu" placeholder="Nome da empresa ou pessoa" />
+            </div>
+            <div class="field">
+              <label for="cort_tipo">Tipo de cortesia ou benefício recebido <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cort_tipo" name="cort_tipo_beneficio" placeholder="Descreva o benefício recebido" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="cort_data">Data aproximada <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cort_data" name="cort_data_aproximada" placeholder="Ex.: Março/2024" />
+            </div>
+            <div class="field">
+              <label for="cort_valor">Valor aproximado (se souber) <span class="opt">(opcional)</span></label>
+              <input type="text" id="cort_valor" name="cort_valor_aproximado" placeholder="R$" />
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="cort_finalidade">Finalidade profissional ou comercial <span class="cond">🟡 Condicional</span></label>
+              <textarea id="cort_finalidade" name="cort_finalidade" placeholder="Descreva a finalidade do benefício recebido..."></textarea>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="cort_aprovado">Foi previamente aprovado ou comunicado internamente? <span class="cond">🟡 Condicional</span></label>
+              <select id="cort_aprovado" name="cort_aprovado_internamente">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option><option>Não sabia que era necessário</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="cort_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="cort_obs" name="cort_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 05 · PESSOA POLITICAMENTE EXPOSTA (PEP)
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 05</span>
+        <span class="block-title">Pessoa Politicamente Exposta (PEP)</span>
+      </div>
+      <p class="block-desc">Bloco técnico e objetivo. Não se pergunta opinião política — pergunta-se exposição a cargo público relevante, conforme exigência de compliance, KYC e normas regulatórias.</p>
+      <div class="block-body">
+
+        <!-- 5.1 -->
+        <div class="sub-section-label">5.1 — PEP próprio</div>
+        <p class="field-hint" style="margin-bottom:10px;">PEP: quem exerce ou exerceu cargo, emprego ou função pública relevante no Brasil ou exterior.</p>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="pep_proprio">Você é ou foi Pessoa Politicamente Exposta (PEP) nos últimos 5 anos? <span class="req">*</span></label>
+            <select id="pep_proprio" name="pep_proprio" required onchange="toggleConditional('pep_proprio','secao-pep-proprio',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option><option>Sim</option><option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-pep-proprio">
+          <div class="section-inner-label">Preencher se SIM em 5.1</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep1_cargo">Cargo ou função exercida <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep1_cargo" name="pep1_cargo" placeholder="Ex.: Vereador, Servidor público..." />
+            </div>
+            <div class="field">
+              <label for="pep1_orgao">Órgão, entidade ou empresa pública <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep1_orgao" name="pep1_orgao" placeholder="Nome do órgão ou entidade" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep1_periodo">Período (início e fim ou "em curso") <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep1_periodo" name="pep1_periodo" placeholder="Ex.: 2019–2022 ou Em curso" />
+            </div>
+            <div class="field">
+              <label for="pep1_local">País / Estado / Município <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep1_local" name="pep1_local" placeholder="Ex.: Rio de Janeiro, RJ" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep1_ativo">A função ainda está ativa? <span class="cond">🟡 Condicional</span></label>
+              <select id="pep1_ativo" name="pep1_funcao_ativa">
+                <option value="" disabled selected>Selecione...</option>
+                <option>Sim</option><option>Não</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pep1_obs">Observações <span class="opt">(opcional)</span></label>
+              <input type="text" id="pep1_obs" name="pep1_observacoes" placeholder="Informações adicionais..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.2 -->
+        <div class="sub-section-label">5.2 — Familiar ou pessoa próxima PEP</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="pep_familiar">Algum familiar próximo, cônjuge, companheiro(a) ou pessoa com vínculo econômico relevante é ou foi PEP nos últimos 5 anos? <span class="req">*</span></label>
+            <select id="pep_familiar" name="pep_familiar" required onchange="toggleConditional('pep_familiar','secao-pep-familiar',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option><option>Sim</option><option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-pep-familiar">
+          <div class="section-inner-label">Preencher se SIM em 5.2</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep2_nome">Nome da pessoa <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep2_nome" name="pep2_nome_pessoa" placeholder="Nome completo" />
+            </div>
+            <div class="field">
+              <label for="pep2_tipo_relacao">Tipo de relação com você <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep2_tipo_relacao" name="pep2_tipo_relacao" placeholder="Ex.: Cônjuge, Pai..." />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep2_cargo">Cargo ou função exercida <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep2_cargo" name="pep2_cargo" placeholder="Ex.: Deputado Federal..." />
+            </div>
+            <div class="field">
+              <label for="pep2_orgao">Órgão / Entidade / Empresa pública <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep2_orgao" name="pep2_orgao" placeholder="Nome do órgão ou entidade" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="pep2_periodo">Período <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="pep2_periodo" name="pep2_periodo" placeholder="Ex.: 2018–2022" />
+            </div>
+            <div class="field">
+              <label for="pep2_obs">Observações <span class="opt">(opcional)</span></label>
+              <input type="text" id="pep2_obs" name="pep2_observacoes" placeholder="Informações adicionais..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.3 -->
+        <div class="sub-section-label">5.3 — Cargo público, mandato ou função pública</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="cargo_publico">Você exerce ou exerceu, nos últimos 5 anos, cargo público, mandato eletivo, função em empresa estatal, autarquia, órgão regulador, partido político ou organização com influência pública relevante? <span class="req">*</span></label>
+            <select id="cargo_publico" name="cargo_publico" required onchange="toggleConditional('cargo_publico','secao-cargo-publico',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option><option>Sim</option><option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-cargo-publico">
+          <div class="section-inner-label">Preencher se SIM em 5.3</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="cp_cargo">Cargo ou função <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cp_cargo" name="cp_cargo" placeholder="Descreva o cargo ou função" />
+            </div>
+            <div class="field">
+              <label for="cp_entidade">Entidade / Órgão <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cp_entidade" name="cp_entidade" placeholder="Nome da entidade ou órgão" />
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="cp_periodo">Período <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="cp_periodo" name="cp_periodo" placeholder="Ex.: 2020–2023 ou Em curso" />
+            </div>
+            <div class="field">
+              <label for="cp_relacao_grupo">Relação potencial com atividades do Grupo <span class="opt">(opcional)</span></label>
+              <input type="text" id="cp_relacao_grupo" name="cp_relacao_grupo" placeholder="Descreva se houver..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.4 -->
+        <div class="sub-section-label">5.4 — Relação com autoridade pública relevante</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="autoridade_publica">Você possui relação próxima com autoridade pública ou agente público com poder decisório sobre contratos, licenças, autorizações, fiscalizações ou decisões que possam impactar o Grupo Águia? <span class="req">*</span></label>
+            <select id="autoridade_publica" name="autoridade_publica" required onchange="toggleConditional('autoridade_publica','secao-autoridade-publica',['Não'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Não</option><option>Sim</option><option>Tenho dúvida</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-autoridade-publica">
+          <div class="section-inner-label">Preencher se SIM em 5.4</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="ap_tipo">Tipo de relação <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="ap_tipo" name="ap_tipo_relacao" placeholder="Ex.: Familiar, Amigo, Sócio..." />
+            </div>
+            <div class="field">
+              <label for="ap_orgao">Órgão ou entidade relacionada <span class="cond">🟡 Condicional</span></label>
+              <input type="text" id="ap_orgao" name="ap_orgao_entidade" placeholder="Nome do órgão ou entidade" />
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ap_natureza">Natureza da decisão pública potencialmente relacionada ao Grupo <span class="cond">🟡 Condicional</span></label>
+              <textarea id="ap_natureza" name="ap_natureza_decisao" placeholder="Descreva a natureza da decisão..."></textarea>
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="ap_obs">Observações <span class="opt">(opcional)</span></label>
+              <textarea id="ap_obs" name="ap_observacoes" placeholder="Informações adicionais..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 06 · CONTATO DE EMERGÊNCIA
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 06</span>
+        <span class="block-title">Contato de Emergência</span>
+      </div>
+      <p class="block-desc">Obrigatório: pelo menos um contato. O segundo é fortemente recomendado. Devem ser pessoas diferentes.</p>
+      <div class="block-body">
+
+        <!-- Primeiro contato -->
+        <div class="sub-section-label">Primeiro contato de emergência</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="emergencia_nome">Nome completo <span class="req">*</span></label>
+            <input type="text" id="emergencia_nome" name="emergencia_nome" placeholder="Nome completo" required />
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="emergencia_parentesco">Grau de parentesco ou relação <span class="req">*</span></label>
+            <input type="text" id="emergencia_parentesco" name="emergencia_parentesco" placeholder="Ex.: cônjuge, mãe, irmão(ã), amigo(a)" required />
+          </div>
+          <div class="field">
+            <label for="emergencia_mora_cidade">Mora na mesma cidade que você? <span class="req">*</span></label>
+            <select id="emergencia_mora_cidade" name="emergencia_mora_mesma_cidade" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim</option><option>Não</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="emergencia_tel1">Telefone principal <span class="req">*</span></label>
+            <input type="tel" id="emergencia_tel1" name="emergencia_tel1" placeholder="(DDD) 9XXXX-XXXX" required />
+          </div>
+          <div class="field">
+            <label for="emergencia_tel2">Telefone alternativo <span class="opt">(opcional)</span></label>
+            <input type="tel" id="emergencia_tel2" name="emergencia_tel2" placeholder="(DDD) 9XXXX-XXXX" />
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="emergencia_email1">E-mail <span class="opt">(opcional)</span></label>
+            <input type="email" id="emergencia_email1" name="emergencia_email1" placeholder="email@exemplo.com" />
+          </div>
+        </div>
+
+        <!-- Segundo contato -->
+        <div class="sub-section-label" style="margin-top:16px;">Segundo contato de emergência <span style="font-size:11px;color:#9ca3af;font-weight:400;text-transform:none;">(fortemente recomendado)</span></div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="emergencia2_nome">Nome completo <span class="opt">(opcional)</span></label>
+            <input type="text" id="emergencia2_nome" name="emergencia2_nome" placeholder="Nome completo" />
+          </div>
+          <div class="field">
+            <label for="emergencia2_parentesco">Grau de parentesco ou relação <span class="opt">(opcional)</span></label>
+            <input type="text" id="emergencia2_parentesco" name="emergencia2_parentesco" placeholder="Ex.: mãe, irmão(ã), amigo(a)" />
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="emergencia2_tel1">Telefone principal <span class="opt">(opcional)</span></label>
+            <input type="tel" id="emergencia2_tel1" name="emergencia2_tel1" placeholder="(DDD) 9XXXX-XXXX" />
+          </div>
+          <div class="field">
+            <label for="emergencia2_tel2">Telefone alternativo <span class="opt">(opcional)</span></label>
+            <input type="tel" id="emergencia2_tel2" name="emergencia2_tel2" placeholder="(DDD) 9XXXX-XXXX" />
+          </div>
+        </div>
+
+        <!-- Saúde emergencial -->
+        <div class="sub-section-label" style="margin-top:16px;">Observação emergencial de saúde</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="saude_emergencial">Você deseja registrar alguma informação emergencial de saúde relevante em caso de urgência? <span class="opt">(opcional)</span></label>
+            <p class="field-hint">Ex.: alergia grave, medicamento essencial, restrição médica crítica. Não é necessário informar diagnóstico. Dado sensível — acesso restrito.</p>
+            <textarea id="saude_emergencial" name="saude_emergencial" placeholder="Informe apenas o que for essencial para uma situação de emergência..."></textarea>
+          </div>
+        </div>
+
+        <!-- Autorização de contato -->
+        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:10px;padding:14px;margin-top:14px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:400;">
+            <input type="checkbox" id="autoriza_contato" name="autoriza_contato" value="Sim, autorizo" required
+              style="width:18px;height:18px;min-width:18px;accent-color:#6366f1;margin-top:1px;cursor:pointer;" />
+            <span style="font-size:13px;color:#111827;line-height:1.5;">
+              <strong>Autorizo</strong> o Grupo Águia a contatar as pessoas indicadas acima exclusivamente em situações de emergência, necessidade administrativa relevante ou impossibilidade de contato direto comigo. <span style="color:#ef4444;font-size:12px;"> *</span>
+            </span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BLOCO 07 · SISTEMAS, ACESSOS E SEGURANÇA DA INFORMAÇÃO
+    ════════════════════════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 07</span>
+        <span class="block-title">Sistemas, Acessos e Segurança da Informação</span>
+      </div>
+      <p class="block-desc">Fundamental para mapeamento de riscos de TI, LGPD, auditoria e segregação de funções.</p>
+      <div class="block-body">
+
+        <!-- 7.1 -->
+        <div class="sub-section-label">7.1 — Sistemas utilizados no trabalho</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>Quais sistemas, plataformas ou bases você acessa para executar seu trabalho? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group" id="sistemas_trabalho">
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Financeiro/ERP (Starsoft, bancos, pagamentos)" /><span>Financeiro/ERP (Starsoft, bancos, pagamentos)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Operação/Turismo (STUR, TMS, Argo, Reserva Fácil)" /><span>Operação/Turismo (STUR, TMS, Argo, Reserva Fácil)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Dados/BI (Power BI, dashboards, planilhas consolidadas)" /><span>Dados/BI (Power BI, dashboards, planilhas consolidadas)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="RH/Pessoas (folha, Impulse, benefícios)" /><span>RH/Pessoas (folha, Impulse, benefícios)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Atendimento/CRM (Zendesk, WhatsApp corp.)" /><span>Atendimento/CRM (Zendesk, WhatsApp corp.)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Arquivos/Docs (SharePoint, OneDrive, Teams, Google Drive)" /><span>Arquivos/Docs (SharePoint, OneDrive, Teams, Google Drive)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Marketing/Digital (Meta Ads, Google Ads)" /><span>Marketing/Digital (Meta Ads, Google Ads)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Tecnologia (GitHub, servidores, painéis técnicos)" /><span>Tecnologia (GitHub, servidores, painéis técnicos)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="sistemas_trabalho" value="Outros" id="cb_sistemas_outros" onchange="toggleCheckboxOther('cb_sistemas_outros','field-sistemas-outros')" /><span>Outros</span></label>
+            </div>
+            <div class="other-field" id="field-sistemas-outros" style="margin-top:6px;">
+              <input type="text" name="sistemas_trabalho_outros" placeholder="Informe outros sistemas utilizados..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="perfil_admin">Você possui perfil administrador em algum sistema? <span class="req">*</span></label>
+            <select id="perfil_admin" name="perfil_admin" required onchange="toggleConditional('perfil_admin','secao-perfil-admin',['Não','Não sei'])">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim</option><option>Não</option><option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="secao-perfil-admin">
+          <div class="section-inner-label">Preencher se SIM</div>
+          <div class="field">
+            <label for="sistemas_admin">Em qual(is) sistema(s) possui perfil admin? <span class="cond">🟡 Condicional</span></label>
+            <textarea id="sistemas_admin" name="sistemas_admin" placeholder="Liste os sistemas onde possui perfil administrador..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr; margin-top:14px;">
+          <div class="field">
+            <label for="pode_alterar_dados">Você consegue criar, alterar ou excluir dados nesses sistemas? <span class="req">*</span></label>
+            <select id="pode_alterar_dados" name="pode_criar_alterar_excluir" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim</option><option>Não</option><option>Em alguns</option><option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 7.2 -->
+        <div class="sub-section-label">7.2 — Acesso a dados sensíveis ou estratégicos</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>No exercício da sua função, você acessa dados financeiros, pessoais, sensíveis, comerciais ou estratégicos? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group" id="dados_sensiveis">
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Não acesso dados sensíveis" /><span>Não acesso dados sensíveis</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados pessoais de colaboradores" /><span>Dados pessoais de colaboradores</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados pessoais de clientes" /><span>Dados pessoais de clientes</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados pessoais de fornecedores/parceiros" /><span>Dados pessoais de fornecedores/parceiros</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados financeiros" /><span>Dados financeiros</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados bancários" /><span>Dados bancários</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados de folha/remuneração/benefícios" /><span>Dados de folha/remuneração/benefícios</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados comerciais" /><span>Dados comerciais</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados de contratos" /><span>Dados de contratos</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados estratégicos/confidenciais" /><span>Dados estratégicos/confidenciais</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados de saúde" /><span>Dados de saúde</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Dados de menores de idade" /><span>Dados de menores de idade</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="dados_sensiveis" value="Outros" id="cb_dados_outros" onchange="toggleCheckboxOther('cb_dados_outros','field-dados-outros')" /><span>Outros</span></label>
+            </div>
+            <div class="other-field" id="field-dados-outros" style="margin-top:6px;">
+              <input type="text" name="dados_sensiveis_outros" placeholder="Informe outros tipos de dados acessados..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="sistemas_dados_sensiveis">Em quais sistemas esses dados são acessados? <span class="cond">🟡 Condicional</span></label>
+            <input type="text" id="sistemas_dados_sensiveis" name="sistemas_dados_sensiveis" placeholder="Liste os sistemas..." />
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="acesso_recorrencia">O acesso é recorrente ou eventual? <span class="cond">🟡 Condicional</span></label>
+            <select id="acesso_recorrencia" name="acesso_recorrencia">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Recorrente (diário/semanal)</option>
+              <option>Eventual (mensal ou menos)</option>
+              <option>Não se aplica</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="pode_exportar">Você consegue exportar, baixar ou compartilhar esses dados? <span class="cond">🟡 Condicional</span></label>
+            <select id="pode_exportar" name="pode_exportar_dados">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim</option><option>Não</option><option>Em alguns casos</option><option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="permissao_edicao">Você possui permissão de edição ou apenas visualização? <span class="cond">🟡 Condicional</span></label>
+            <select id="permissao_edicao" name="permissao_edicao_dados">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Apenas visualização</option><option>Edição</option><option>Ambos</option>
+              <option>Depende do sistema</option><option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 7.3 -->
+        <div class="sub-section-label">7.3 — Aprovações e alçadas</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>Você aprova, valida ou participa de decisões sobre pagamentos, compras, fornecedores, reembolsos, contratos ou despesas? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group">
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Não" /><span>Não</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Aprovo pagamentos" /><span>Aprovo pagamentos</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Aprovo compras" /><span>Aprovo compras</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Aprovo fornecedores" /><span>Aprovo fornecedores</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Aprovo reembolsos" /><span>Aprovo reembolsos</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Aprovo contratos" /><span>Aprovo contratos</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Valido/recomendo tecnicamente sem aprovação formal" /><span>Valido/recomendo tecnicamente sem aprovação formal</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="aprovacoes" value="Outro" id="cb_aprov_outro" onchange="toggleCheckboxOther('cb_aprov_outro','field-aprov-outro')" /><span>Outro</span></label>
+            </div>
+            <div class="other-field" id="field-aprov-outro" style="margin-top:6px;">
+              <input type="text" name="aprovacoes_outro" placeholder="Descreva..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="alcada_valor">Valor aproximado de alçada (R$) <span class="cond">🟡 Condicional</span></label>
+            <input type="text" id="alcada_valor" name="alcada_valor" placeholder="Ex.: R$ 5.000 | R$ 50.000 | Sem limite definido" />
+          </div>
+          <div class="field">
+            <label for="alcada_area">Área ou unidade relacionada <span class="cond">🟡 Condicional</span></label>
+            <input type="text" id="alcada_area" name="alcada_area" placeholder="Ex.: Financeiro, Operações..." />
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="alcada_sistema">Sistema utilizado para aprovação <span class="cond">🟡 Condicional</span></label>
+            <input type="text" id="alcada_sistema" name="alcada_sistema" placeholder="Ex.: Starsoft, e-mail, Teams..." />
+          </div>
+        </div>
+
+        <!-- 7.4 -->
+        <div class="sub-section-label">7.4 — Cadastro de fornecedores e clientes</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>Você cria, altera, valida ou aprova cadastros de fornecedores, clientes, parceiros ou prestadores? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group">
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Não" /><span>Não</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Sim — fornecedores" /><span>Sim — fornecedores</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Sim — clientes" /><span>Sim — clientes</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Sim — parceiros" /><span>Sim — parceiros</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Sim — prestadores" /><span>Sim — prestadores</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="cadastros" value="Outro" id="cb_cad_outro" onchange="toggleCheckboxOther('cb_cad_outro','field-cad-outro')" /><span>Outro</span></label>
+            </div>
+            <div class="other-field" id="field-cad-outro" style="margin-top:6px;">
+              <input type="text" name="cadastros_outro" placeholder="Descreva..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div class="field">
+            <label for="cad_acoes">Você cria, altera, aprova ou apenas consulta esses cadastros? <span class="cond">🟡 Condicional</span></label>
+            <select id="cad_acoes" name="cadastros_acoes">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Apenas consulto</option><option>Crio</option><option>Altero</option>
+              <option>Aprovo</option><option>Crio e altero</option><option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cad_dupla_aprovacao">Existe dupla aprovação nesse processo? <span class="cond">🟡 Condicional</span></label>
+            <select id="cad_dupla_aprovacao" name="cadastros_dupla_aprovacao">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim</option><option>Não</option><option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 7.5 -->
+        <div class="sub-section-label">7.5 — Equipamento próprio no trabalho</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>Você utiliza equipamento próprio para realizar atividades de trabalho? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group">
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Não" /><span>Não</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Sim — computador pessoal" /><span>Sim — computador pessoal</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Sim — celular pessoal" /><span>Sim — celular pessoal</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Sim — tablet pessoal" /><span>Sim — tablet pessoal</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Uso apenas eventualmente" /><span>Uso apenas eventualmente</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="equipamento_proprio" value="Outro" id="cb_eq_outro" onchange="toggleCheckboxOther('cb_eq_outro','field-eq-outro')" /><span>Outro</span></label>
+            </div>
+            <div class="other-field" id="field-eq-outro" style="margin-top:6px;">
+              <input type="text" name="equipamento_proprio_outro" placeholder="Descreva..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="acesso_corp_equipamento">Se sim: acessa e-mail corporativo, sistemas do Grupo ou dados de clientes nesse equipamento? <span class="cond">🟡 Condicional</span></label>
+            <select id="acesso_corp_equipamento" name="acessa_corp_equipamento_proprio">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Sim — e-mail corporativo</option>
+              <option>Sim — sistemas do Grupo</option>
+              <option>Sim — dados de clientes</option>
+              <option>Sim — todos os anteriores</option>
+              <option>Não</option>
+              <option>Não sei</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 7.6 -->
+        <div class="sub-section-label">7.6 — Canais de comunicação utilizados no trabalho</div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label>Quais canais de comunicação você utiliza para tratar assuntos de trabalho? (marcar todos que se aplicam) <span class="req">*</span></label>
+            <div class="checkbox-group">
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="E-mail corporativo" /><span>E-mail corporativo (@grupoaguia.com.br)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="Microsoft Teams" /><span>Microsoft Teams</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="WhatsApp corporativo" /><span>WhatsApp corporativo (número fornecido pela empresa)</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="WhatsApp pessoal para trabalho" /><span>WhatsApp pessoal para assuntos de trabalho</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="E-mail pessoal para trabalho" /><span>E-mail pessoal para assuntos de trabalho</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="Telefone pessoal para trabalho" /><span>Telefone pessoal para assuntos de trabalho</span></label>
+              <label class="checkbox-option"><input type="checkbox" name="canais_trabalho" value="Outro" id="cb_canal_outro" onchange="toggleCheckboxOther('cb_canal_outro','field-canal-outro')" /><span>Outro</span></label>
+            </div>
+            <div class="other-field" id="field-canal-outro" style="margin-top:6px;">
+              <input type="text" name="canais_trabalho_outro" placeholder="Informe outros canais utilizados..." />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         LGPD
+    ═══════════════════════════════════════ -->
     <div style="background:#f8faff;border:1.5px solid #c7d2fe;border-radius:12px;padding:16px 18px;margin-bottom:1.5rem;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2 4v4c0 3.31 2.56 6.41 6 7.17C11.44 14.41 14 11.31 14 8V4L8 1.5z" stroke="#6366f1" stroke-width="1.4" stroke-linejoin="round"/><path d="M5.5 8l2 2 3-3" stroke="#6366f1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span style="font-size:12px;font-weight:700;color:#4338ca;text-transform:uppercase;letter-spacing:0.05em;">Autorização — Lei Geral de Proteção de Dados (LGPD)</span>
       </div>
       <p style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:14px;">
-        As informações fornecidas neste formulário serão utilizadas exclusivamente para
-        <strong>fins administrativos e de gestão interna</strong>, em conformidade com a
-        <strong>Lei nº 13.709/2018 (LGPD)</strong>. Os dados coletados incluem informações
-        pessoais, de endereço e de deslocamento, que serão tratados de forma confidencial
-        pela empresa, não sendo compartilhados com terceiros sem o seu consentimento.
-        Você poderá solicitar a revisão, correção ou exclusão dos seus dados a qualquer
-        momento junto ao setor de Recursos Humanos.
+        As informações fornecidas neste formulário serão utilizadas exclusivamente para <strong>fins administrativos internos legítimos</strong>, em conformidade com a <strong>Lei nº 13.709/2018 (LGPD)</strong>. Os dados coletados serão tratados de forma confidencial pela empresa, não sendo compartilhados com terceiros sem o seu consentimento. Dados sensíveis (PEP, saúde, relações afetivas) têm acesso restrito ao DDH, Diretoria e Jurídico. Você poderá solicitar a revisão, correção ou exclusão dos seus dados a qualquer momento junto ao setor de Recursos Humanos.
       </p>
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
         <input type="checkbox" id="lgpd_aceite" name="lgpd_aceite" value="Autorizado" required
           style="width:18px;height:18px;min-width:18px;accent-color:#6366f1;margin-top:1px;cursor:pointer;" />
         <span style="font-size:13px;color:#111827;line-height:1.5;">
-          <strong>Li e autorizo</strong> o uso das minhas informações para fins administrativos
-          e de gestão interna, conforme descrito acima e em conformidade com a LGPD.
+          <strong>Li e autorizo</strong> o uso das minhas informações para fins administrativos e de gestão interna, conforme descrito acima e em conformidade com a LGPD.
           <span style="color:#ef4444;font-size:12px;"> *</span>
         </span>
       </label>
@@ -551,12 +1606,12 @@
       </p>
     </div>
 
-    <button type="submit" class="btn-submit" id="btn-submit">Enviar</button>
+    <button type="submit" class="btn-submit" id="btn-submit">Enviar cadastro</button>
   </form>
 
   <div class="success-banner" id="success-banner">
     <div class="icon">✅</div>
-    <strong>Formulário enviado com sucesso!</strong>
+    <strong>Cadastro enviado com sucesso!</strong>
     <span>Obrigado pelo preenchimento. Suas respostas foram registradas.</span>
   </div>
 
@@ -596,10 +1651,9 @@
     return v;
   }
 
-  ['emergencia_tel1','emergencia_tel2'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function() {
-      this.value = formatTel(this.value);
-    });
+  ['tel_pessoal','tel_alternativo','emergencia_tel1','emergencia_tel2','emergencia2_tel1','emergencia2_tel2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', function() { this.value = formatTel(this.value); });
   });
 
   function clearAddr() {
@@ -698,9 +1752,6 @@
     const val   = document.querySelector('input[name="possui_filhos"]:checked')?.value;
     const secao = document.getElementById('secao-filhos');
     secao.style.display = val === 'Sim' ? 'block' : 'none';
-    // Tornar campos obrigatórios
-    const campos = secao.querySelectorAll('select, input[type="radio"]');
-    campos.forEach(c => c.required = val === 'Sim');
     if (val !== 'Sim') {
       document.getElementById('secao-deficiencia').style.display = 'none';
     }
@@ -726,6 +1777,35 @@
     }
   }
 
+  function toggleConditional(selectId, sectionId, negativeValues) {
+    const sel = document.getElementById(selectId);
+    const sec = document.getElementById(sectionId);
+    if (!sel || !sec) return;
+    const show = sel.value && !negativeValues.includes(sel.value);
+    sec.style.display = show ? 'block' : 'none';
+  }
+
+  function toggleCheckboxOther(cbId, fieldId) {
+    const cb    = document.getElementById(cbId);
+    const field = document.getElementById(fieldId);
+    if (!cb || !field) return;
+    field.style.display = cb.checked ? 'block' : 'none';
+  }
+
+  // ── Validação de checkboxes obrigatórios ─────────────────
+  function validateRequiredCheckboxGroups() {
+    const groups = ['sistemas_trabalho', 'dados_sensiveis', 'aprovacoes', 'cadastros', 'equipamento_proprio', 'canais_trabalho'];
+    for (const grp of groups) {
+      const checked = document.querySelectorAll(`input[name="${grp}"]:checked`);
+      if (checked.length === 0) {
+        const labels = { sistemas_trabalho: 'Sistemas utilizados no trabalho', dados_sensiveis: 'Dados sensíveis acessados', aprovacoes: 'Aprovações e alçadas', cadastros: 'Cadastro de fornecedores e clientes', equipamento_proprio: 'Equipamento próprio no trabalho', canais_trabalho: 'Canais de comunicação utilizados' };
+        alert(`Por favor, responda: "${labels[grp]}"`);
+        return false;
+      }
+    }
+    return true;
+  }
+
   // ── Envio ─────────────────────────────────────────────────
   document.getElementById('form-principal').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -741,7 +1821,6 @@
       }
     }
 
-    // Validação de radios condicionais
     if (document.getElementById('secao-filhos').style.display === 'block') {
       if (!document.querySelector('input[name="filho_deficiencia"]:checked')) {
         alert('Por favor, responda se seu filho possui deficiência com laudo.');
@@ -749,7 +1828,8 @@
       }
     }
 
-    // Validação LGPD
+    if (!validateRequiredCheckboxGroups()) return;
+
     const lgpd = document.getElementById('lgpd_aceite');
     const lgpdErro = document.getElementById('lgpd-erro');
     if (!lgpd.checked) {
@@ -758,6 +1838,13 @@
       return;
     } else {
       lgpdErro.style.display = 'none';
+    }
+
+    const autoriza = document.getElementById('autoriza_contato');
+    if (!autoriza.checked) {
+      alert('Por favor, marque a autorização de contato de emergência (Bloco 06).');
+      autoriza.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
 
     const selects = this.querySelectorAll('select[required]');
@@ -775,8 +1862,15 @@
 
     const formData = new FormData(this);
 
-    // Substituir "Outro/Outra" pelo texto digitado
-    const selectsOutra = ['estado_civil', 'qtd_filhos', 'modal', 'tempo_ida', 'tempo_volta'];
+    // Consolidar checkboxes em texto
+    const checkGroups = ['sistemas_trabalho','dados_sensiveis','aprovacoes','cadastros','equipamento_proprio','canais_trabalho'];
+    checkGroups.forEach(grp => {
+      const checked = [...document.querySelectorAll(`input[name="${grp}"]:checked`)].map(c => c.value);
+      formData.delete(grp);
+      formData.set(grp, checked.join('; '));
+    });
+
+    const selectsOutra = ['estado_civil','qtd_filhos','modal','local_trabalho'];
     selectsOutra.forEach(id => {
       const sel = document.getElementById(id);
       if (sel && (sel.value === 'Outro' || sel.value === 'Outra')) {
@@ -786,17 +1880,10 @@
       formData.delete(`${id}_outro`);
     });
 
-    // Se não tem filhos, limpar campos de filhos
     if (document.querySelector('input[name="possui_filhos"]:checked')?.value !== 'Sim') {
       formData.delete('qtd_filhos');
       formData.delete('filho_deficiencia');
       formData.delete('tipo_deficiencia');
-    }
-
-    // Remover attachment vazio (sem arquivo selecionado)
-    const arquivoInput = document.getElementById("laudo_arquivo");
-    if (!arquivoInput || !arquivoInput.files || arquivoInput.files.length === 0) {
-      formData.delete("attachment");
     }
 
     try {
@@ -816,7 +1903,7 @@
     } catch {
       document.getElementById('error-banner').style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Enviar';
+      btn.textContent = 'Enviar cadastro';
     }
   });
 </script>
